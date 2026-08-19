@@ -5,8 +5,8 @@
 
 const CONFIG = {
     HER_NAME   : "khushi",   /* ← change this */
-    ANSWER_ONE : "3rd_person", /* ← answer to question 1 */
-    ANSWER_TWO : "8th_grader"  /* ← answer to question 2 */
+    ANSWER_ONE : "khushi", /* ← answer to question 1 */
+    ANSWER_TWO : "9 january"  /* ← answer to question 2 */
 };
 
 const DEBUG = false;
