@@ -23,16 +23,19 @@ function showAuthentication(){
     }
 
     loadTemplate("auth-template");
+    initializeBirthdayPicker(app);
 
     const btn = document.getElementById("verifyButton");
     btn.addEventListener("click", verifyIdentity);
     document.getElementById("answerTwo")
-        .addEventListener("keypress", e => { if(e.key==="Enter") verifyIdentity(); });
+        .addEventListener("keypress", e => {
+            if(e.key === "Enter" && e.currentTarget.value.trim()) verifyIdentity();
+        });
 }
 
 function verifyIdentity(){
     const a1  = document.getElementById("answerOne").value.trim();
-    const a2  = document.getElementById("answerTwo").value.trim();
+    const a2  = document.getElementById("answerTwo").value.trim().toLowerCase();
     const msg = document.getElementById("statusText");
 
     if(a1 === CONFIG.ANSWER_ONE && a2 === CONFIG.ANSWER_TWO){
@@ -46,6 +49,72 @@ function verifyIdentity(){
         document.getElementById("answerOne").value = "";
         document.getElementById("answerTwo").value = "";
     }
+}
+
+function initializeBirthdayPicker(root){
+    const field = root.querySelector(".birthdayDateField");
+    if(!field) return;
+
+    const input = field.querySelector("#answerTwo");
+    const picker = field.querySelector("#birthdayPicker");
+    const monthName = picker.querySelector(".birthdayMonthName");
+    const daysContainer = picker.querySelector(".birthdayDays");
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let monthIndex = 0;
+
+    const closePicker = () => {
+        picker.hidden = true;
+        input.setAttribute("aria-expanded", "false");
+    };
+
+    const renderDays = () => {
+        monthName.textContent = months[monthIndex];
+        daysContainer.replaceChildren();
+
+        for(let day = 1; day <= daysInMonth[monthIndex]; day++){
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "birthdayDay";
+            button.textContent = day;
+            button.setAttribute("aria-label", `${day} ${months[monthIndex]}`);
+            button.addEventListener("click", () => {
+                input.value = `${day} ${months[monthIndex].toLowerCase()}`;
+                closePicker();
+            });
+            daysContainer.appendChild(button);
+        }
+    };
+
+    picker.querySelectorAll("[data-month-direction]").forEach(button => {
+        button.addEventListener("click", () => {
+            monthIndex = (monthIndex + Number(button.dataset.monthDirection) + months.length) % months.length;
+            renderDays();
+        });
+    });
+
+    input.addEventListener("click", () => {
+        picker.hidden = !picker.hidden;
+        input.setAttribute("aria-expanded", String(!picker.hidden));
+    });
+    input.addEventListener("keydown", event => {
+        if(event.key === "Enter" || event.key === " "){
+            if(event.key === "Enter" && input.value) return;
+            event.preventDefault();
+            picker.hidden = false;
+            input.setAttribute("aria-expanded", "true");
+        } else if(event.key === "Escape"){
+            closePicker();
+        }
+    });
+    field.closest(".glassCard").addEventListener("click", event => {
+        if(!field.contains(event.target)) closePicker();
+    });
+
+    renderDays();
 }
 
 /*=========================================================
@@ -603,6 +672,7 @@ function requestDocumentAuthentication() {
     const answerOneInput = modalContainer.querySelector("#answerOne");
     const answerTwoInput = modalContainer.querySelector("#answerTwo");
     const statusText = modalContainer.querySelector("#statusText");
+    initializeBirthdayPicker(modalContainer);
 
     const closeModal = () => {
         modalContainer.classList.add("fading-out");
@@ -613,7 +683,7 @@ function requestDocumentAuthentication() {
 
     const verify = () => {
         const a1 = answerOneInput.value.trim();
-        const a2 = answerTwoInput.value.trim();
+        const a2 = answerTwoInput.value.trim().toLowerCase();
 
         if (a1 === CONFIG.ANSWER_ONE && a2 === CONFIG.ANSWER_TWO) {
             statusText.textContent = "Identity Verified ✓";
@@ -632,7 +702,7 @@ function requestDocumentAuthentication() {
 
     verifyButton.addEventListener("click", verify);
     answerTwoInput.addEventListener("keypress", e => {
-        if (e.key === "Enter") verify();
+        if (e.key === "Enter" && answerTwoInput.value.trim()) verify();
     });
 }
 

@@ -141,16 +141,31 @@
             autocomplete="off"
             type="password">
 
-        <label>
+        <label for="answerTwo">
 
-            When is your birthday? (answer as: date full-month)
+            When is your birthday? (select date and month)
 
         </label>
 
-        <input
-            id="answerTwo"
-            autocomplete="off"
-            type="password">
+        <div class="birthdayDateField">
+            <input
+                id="answerTwo"
+                autocomplete="off"
+                type="text"
+                placeholder="Select date and month"
+                readonly
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls="birthdayPicker">
+            <div id="birthdayPicker" class="birthdayPicker" role="dialog" aria-label="Select birthday" hidden>
+                <div class="birthdayPickerHeader">
+                    <button type="button" class="birthdayMonthButton" data-month-direction="-1" aria-label="Previous month">‹</button>
+                    <span class="birthdayMonthName"></span>
+                    <button type="button" class="birthdayMonthButton" data-month-direction="1" aria-label="Next month">›</button>
+                </div>
+                <div class="birthdayDays" aria-label="Days of the month"></div>
+            </div>
+        </div>
 
         <button id="verifyButton">
 
