@@ -6,7 +6,7 @@
 const CONFIG = {
     HER_NAME   : "khushi",   /* ← change this */
     ANSWER_ONE : "khushi", /* ← answer to question 1 */
-    ANSWER_TWO : "9 january"  /* ← answer to question 2 */
+    ANSWER_TWO : "8 january"  /* ← answer to question 2 */
 };
 
 const DEBUG = false;
